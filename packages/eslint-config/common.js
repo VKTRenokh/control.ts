@@ -63,6 +63,7 @@ module.exports = {
   ignorePatterns: [
     // Ignore dotfiles
     '.*.js',
+    '.*.cjs',
     'node_modules/',
     'dist/',
     'packages/eslint-config/common.js',
