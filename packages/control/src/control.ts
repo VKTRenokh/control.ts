@@ -32,16 +32,20 @@ export abstract class Control<T extends HTMLElement = HTMLElement> {
     this._node.textContent = text;
   }
 
-  public addClass(className: string): void {
+  public addClass(className: string): () => void {
     this._node.classList.add(className);
+
+    return () => this.removeClass(className);
   }
 
   public toggleClass(className: string, force?: boolean): void {
     this._node.classList.toggle(className, force);
   }
 
-  public removeClass(className: string): void {
+  public removeClass(className: string): () => void {
     this._node.classList.remove(className);
+
+    return () => this.addClass(className);
   }
 
   public destroyChildren(): void {

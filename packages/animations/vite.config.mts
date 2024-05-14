@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import { readdirSync } from 'fs'
+import { fileURLToPath } from 'node:url'
 
 const components = readdirSync('src/', 'utf-8')
 const componentsEntries = components
@@ -14,6 +15,11 @@ export default defineConfig({
     },
     sourcemap: true,
     target: 'es2020',
+  },
+  resolve: {
+    alias: {
+      ':)': fileURLToPath(new URL('./src', import.meta.url)),
+    },
   },
   publicDir: false,
 })

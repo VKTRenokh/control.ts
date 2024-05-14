@@ -3,6 +3,10 @@
   "include": ["src/**/*.ts", "vite.config.mts"],
   "exclude": ["dist", "node_modules"],
   "compilerOptions": {
-    "stripInternal": true
+    "stripInternal": true,
+    "baseUrl": "./",
+    "paths": {
+      ":)/*": ["./src/*"]
+    }
   }
 }

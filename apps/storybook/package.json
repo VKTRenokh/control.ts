@@ -12,7 +12,9 @@
     "lint:fix": "eslint --fix ./stories"
   },
   "dependencies": {
-    "@control.ts/design-system": "workspace:*"
+    "@control.ts/design-system": "workspace:*",
+    "@control.ts/animations": "workspace:*",
+    "@control.ts/min": "workspace:*"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^1.3.4",
