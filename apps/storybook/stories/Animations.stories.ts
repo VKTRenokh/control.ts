@@ -3,22 +3,29 @@ import { Transition } from '@control.ts/animations';
 import { BaseComponent } from '@control.ts/min';
 import type { Meta, StoryObj } from '@storybook/html';
 
-type Story = StoryObj<TransitionProps>;
+type AnimationStoryProps = TransitionProps & { component: BaseComponent };
 
-const meta: Meta<TransitionProps> = {
+type Story = StoryObj<AnimationStoryProps>;
+
+const meta: Meta<AnimationStoryProps> = {
   title: 'example/Animation',
   tags: ['autodocs'],
   render: (args) => {
-    args;
-    const element = new BaseComponent({ tag: 'div' });
-    const shitToRender = Transition({}, element);
+    const transitioned = Transition({}, args.component);
+    setTimeout(() => transitioned.forEach((element) => element.destroy()), 500);
 
-    element.destroy();
-    return shitToRender[0].node;
+    new MutationObserver((mutations) => {
+      mutations.forEach(console.log);
+    }).observe(document.body, { attributes: true });
+
+    return transitioned[0]!.node;
   },
-  argTypes: {},
 };
 
-export const Toggle: Story = {};
+export const Toggle: Story = {
+  args: {
+    component: new BaseComponent({ tag: 'div', txt: 'hello' }),
+  },
+};
 
 export default meta;
