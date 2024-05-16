@@ -12,7 +12,8 @@ const meta: Meta<AnimationStoryProps> = {
   tags: ['autodocs'],
   render: (args) => {
     const transitioned = Transition({}, args.component);
-    setTimeout(() => transitioned.forEach((element) => element.destroy()), 500);
+
+    setTimeout(() => transitioned[0]?.destroy(), 500);
 
     new MutationObserver((mutations) => {
       mutations.forEach(console.log);

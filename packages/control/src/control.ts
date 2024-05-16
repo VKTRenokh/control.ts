@@ -40,12 +40,14 @@ export abstract class Control<T extends HTMLElement = HTMLElement> {
 
   public toggleClass(className: string, force?: boolean): void {
     this._node.classList.toggle(className, force);
+
+    console.log('add class', this._node);
   }
 
-  public removeClass(className: string): () => void {
+  public removeClass(className: string): void {
     this._node.classList.remove(className);
 
-    return () => this.addClass(className);
+    console.log('remove class', this._node);
   }
 
   public destroyChildren(): void {
