@@ -1,8 +1,6 @@
 import type { BaseComponent } from '@control.ts/min'
 
-/**
- * @internal
- */
+/** @internal */
 export const noop = () => {}
 
 /** @internal */

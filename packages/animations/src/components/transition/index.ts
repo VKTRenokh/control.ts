@@ -9,28 +9,42 @@ export interface TransitionProps {
   name?: string
 }
 
+type ClassNameFormatter = (stage: string) => string
+
+interface ClassNameFormatters {
+  leave: ClassNameFormatter
+  enter: ClassNameFormatter
+}
 const formatTransitionName = (name?: string) => (name ? `-${name}` : '')
 
-const formatClassName = (name?: string) => (stage: string) => `ct-tr${formatTransitionName(name)}-${stage}`
+const formatClassName = (name?: string) => ({
+  leave: (stage: string) => `ct${formatTransitionName(name)}-leave-${stage}`,
+  enter: (stage: string) => `ct${formatTransitionName(name)}-enter-${stage}`,
+})
 
 export type LazyBaseComponentChild = () => BaseComponentChild
 
-const scheduleClassNameRemoval = (node: BaseComponent, className: string) => nextFrame(node.addClass(className))
+const createDestrucitonListener = (format: ClassNameFormatters) => (node: BaseComponent) => {
+  const deactivate = node.addClass(format.leave('active'))
+
+  node.once('transitionstart', () => {
+    nextFrame(node.addClass(format.leave('from')))
+  })
+
+  node.once('transitionend', () => {
+    deactivate()
+
+    const removeTo = node.addClass(format.leave('to'))
+
+    nextFrame(() => {
+      removeTo()
+      node.destroy()
+    })
+  })
+
+  return true
+}
 
 export const Transition = (props: TransitionProps, ...children: BaseComponent[]) => {
-  const format = formatClassName(props.name)
-
-  return children.map(
-    listenDestroy((node) => {
-      const deactivate = node.addClass(format('leave-active'))
-
-      scheduleClassNameRemoval(node, format('leave-from'))
-
-      node.on('transitionend', () => {
-        deactivate()
-      })
-
-      return true
-    }),
-  )
+  return children.map(listenDestroy(createDestrucitonListener(formatClassName(props.name))))
 }

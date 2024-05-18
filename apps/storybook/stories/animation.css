@@ -1,0 +1,13 @@
+.ct-leave-active {
+  transition: .3s ease;
+  color: red;
+}
+
+.ct-leave-from {
+  opacity: 1,
+}
+
+.ct-leave-to {
+  opacity: 0;
+  color: unset;
+}
