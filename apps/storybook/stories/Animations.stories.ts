@@ -1,8 +1,9 @@
+import './animation.css';
+
 import type { TransitionProps } from '@control.ts/animations';
 import { Transition } from '@control.ts/animations';
 import { BaseComponent } from '@control.ts/min';
 import type { Meta, StoryObj } from '@storybook/html';
-import './animation.css';
 
 type AnimationStoryProps = TransitionProps & { component: BaseComponent };
 
@@ -15,9 +16,8 @@ const meta: Meta<AnimationStoryProps> = {
     const transitioned = Transition({}, args.component);
 
     setTimeout(() => {
-      console.log('destroy');
-      transitioned[0]?.destroy(), 500;
-    });
+      transitioned[0]?.destroy();
+    }, 500);
 
     new MutationObserver((mutations) => {
       mutations.forEach((_mutation) => {

@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   root: true,
   extends: ['@control.ts/eslint-config/common.js'],
   parserOptions: {

@@ -1,6 +1,5 @@
 .ct-leave-active {
-  transition: .3s ease;
-  color: red;
+  transition: .5s ease;
 }
 
 .ct-leave-from {
@@ -9,5 +8,4 @@
 
 .ct-leave-to {
   opacity: 0;
-  color: unset;
 }
