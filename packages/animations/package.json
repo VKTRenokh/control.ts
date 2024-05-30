@@ -19,7 +19,8 @@
   },
   "dependencies": {
     "@control.ts/min": "workspace:*",
-    "@control.ts/signals": "workspace:*"
+    "@control.ts/signals": "workspace:*",
+    "@control.ts/control": "workspace:*"
   },
   "devDependencies": {
     "@control.ts/eslint-config": "workspace:*",

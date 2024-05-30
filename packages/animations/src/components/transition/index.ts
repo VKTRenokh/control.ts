@@ -1,12 +1,12 @@
 import type { BaseComponent as BaseComponentMin } from '@control.ts/min'
-import { type BaseComponent as BaseComponent$, isSignal, type Signal, getValue$ } from '@control.ts/signals'
+import { type BaseComponent as BaseComponent$, isSignal, type Signal } from '@control.ts/signals'
 
 type BaseComponent = BaseComponent$ | BaseComponentMin
 
 import { type DestroyListener, listenDestroyUncurried } from ':)/utils/listen-destroy'
+import { subscribeSome } from ':)/utils/subscribe-some'
 
 import { nextFrame } from './utils/next-frame'
-import { optionSubscribe } from ':)/utils/option-subscribe'
 
 export interface TransitionProps {
   name?: string
@@ -60,10 +60,15 @@ const transitionLogic = (props: TransitionProps, bc: BaseComponent) => {
   listenDestroyUncurried(bc, createDestrucitonListener(formatClassName(props.name)))
 }
 
+const subscriptions = new WeakMap<Transitiable, () => void>()
+
 export const Transition = <T extends Array<Transitiable>>(props: TransitionProps, ...bc: T) => {
   return bc.map((bc) => {
     if (isSignal(bc)) {
-      optionSubscribe(bc, (bc) => transitionLogic(props, bc))
+      subscriptions.set(
+        bc,
+        subscribeSome(bc, (bc) => transitionLogic(props, bc)),
+      )
       return bc
     }
     transitionLogic(props, bc)
