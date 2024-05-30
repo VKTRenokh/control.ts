@@ -131,6 +131,9 @@ importers:
       '@control.ts/min':
         specifier: workspace:*
         version: link:../min
+      '@control.ts/signals':
+        specifier: workspace:*
+        version: link:../signals
     devDependencies:
       '@control.ts/eslint-config':
         specifier: workspace:*

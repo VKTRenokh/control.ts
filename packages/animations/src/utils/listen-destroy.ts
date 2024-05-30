@@ -10,9 +10,9 @@ export const noop = () => {}
 export type DestroyListener<T = BaseComponent> = (bc: T, destroy: () => void) => void | boolean
 
 const addListener =
-  <T extends BaseComponent>(node: T, listener: DestroyListener<T>, originalFn: () => void) =>
+  <T extends BaseComponent>(bc: T, listener: DestroyListener<T>, originalFn: () => void) =>
   () => {
-    if (listener(node, originalFn)) {
+    if (listener(bc, originalFn)) {
       return
     }
     originalFn()
@@ -29,10 +29,10 @@ const replaceDestroy = <T extends BaseComponent>(bc: T, listener: DestroyListene
 /** @internal */
 export const listenDestroy =
   <T extends BaseComponent = BaseComponent>(listener: DestroyListener<T>) =>
-  (node: T) =>
-    replaceDestroy(node, listener)
+  (bc: T) =>
+    replaceDestroy(bc, listener)
 
 /** @internal */
-export const listenDestroyUncurried = <T extends BaseComponent>(node: T, listener: DestroyListener<T>) => {
-  replaceDestroy(node, listener)
+export const listenDestroyUncurried = <T extends BaseComponent>(bc: T, listener: DestroyListener<T>) => {
+  replaceDestroy(bc, listener)
 }

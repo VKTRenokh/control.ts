@@ -1,8 +1,12 @@
-import { type BaseComponent, isSignal, type Signal } from '@control.ts/signals'
+import type { BaseComponent as BaseComponentMin } from '@control.ts/min'
+import { type BaseComponent as BaseComponent$, isSignal, type Signal, getValue$ } from '@control.ts/signals'
+
+type BaseComponent = BaseComponent$ | BaseComponentMin
 
 import { type DestroyListener, listenDestroyUncurried } from ':)/utils/listen-destroy'
 
 import { nextFrame } from './utils/next-frame'
+import { optionSubscribe } from ':)/utils/option-subscribe'
 
 export interface TransitionProps {
   name?: string
@@ -28,39 +32,41 @@ const formatClassName = (name?: string) => {
 
 const createDestrucitonListener =
   (format: ClassNameFormatters): DestroyListener =>
-  (node, destroy) => {
-    const deactivate = node.addClass(format.leave('active'))
+  (bc, destroy) => {
+    const deactivate = bc.addClass(format.leave('active'))
     const toClassName = format.leave('to')
 
-    const removeFrom = node.addClass(format.leave('from'))
+    const removeFrom = bc.addClass(format.leave('from'))
 
     nextFrame(() => {
       removeFrom()
-      node.addClass(toClassName)
+      bc.addClass(toClassName)
     })
 
-    node.once('transitionend', () => {
+    bc.once('transitionend', () => {
       deactivate()
 
       nextFrame(() => {
-        node.removeClass(toClassName)
+        bc.removeClass(toClassName)
         destroy()
       })
     })
     return true
   }
 
-type Transitiable = Array<BaseComponent | Signal<BaseComponent>>
+type Transitiable = BaseComponent | Signal<BaseComponent | null>
 
 const transitionLogic = (props: TransitionProps, bc: BaseComponent) => {
   listenDestroyUncurried(bc, createDestrucitonListener(formatClassName(props.name)))
 }
 
-export const Transition = (props: TransitionProps, ...bc: Transitiable) => {
+export const Transition = <T extends Array<Transitiable>>(props: TransitionProps, ...bc: T) => {
   return bc.map((bc) => {
     if (isSignal(bc)) {
-      return bc.subscribe((bc) => transitionLogic(props, bc))
+      optionSubscribe(bc, (bc) => transitionLogic(props, bc))
+      return bc
     }
     transitionLogic(props, bc)
+    return bc
   })
 }

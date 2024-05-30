@@ -18,7 +18,8 @@
     "test": "vitest"
   },
   "dependencies": {
-    "@control.ts/min": "workspace:*"
+    "@control.ts/min": "workspace:*",
+    "@control.ts/signals": "workspace:*"
   },
   "devDependencies": {
     "@control.ts/eslint-config": "workspace:*",
