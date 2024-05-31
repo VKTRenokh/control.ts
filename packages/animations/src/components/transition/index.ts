@@ -54,21 +54,26 @@ const createDestrucitonListener =
     return true
   }
 
+const createCreationListener = (format: ClassNameFormatters) => (bc: BaseComponent) => {
+  const removeActive = bc.addClass(format.enter('active'))
+  const removeFrom = bc.addClass(format.enter('from'))
+
+  nextFrame(() => {
+    removeFrom()
+  })
+}
+
 type Transitiable = BaseComponent | Signal<BaseComponent | null>
 
 const transitionLogic = (props: TransitionProps, bc: BaseComponent) => {
   listenDestroyUncurried(bc, createDestrucitonListener(formatClassName(props.name)))
 }
 
-const subscriptions = new WeakMap<Transitiable, () => void>()
-
 export const Transition = <T extends Array<Transitiable>>(props: TransitionProps, ...bc: T) => {
   return bc.map((bc) => {
     if (isSignal(bc)) {
-      subscriptions.set(
-        bc,
-        subscribeSome(bc, (bc) => transitionLogic(props, bc)),
-      )
+      subscribeSome(bc, (bc) => transitionLogic(props, bc))
+
       return bc
     }
     transitionLogic(props, bc)
