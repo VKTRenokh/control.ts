@@ -7,6 +7,7 @@ import { type DestroyListener, listenDestroyUncurried } from ':)/utils/listen-de
 import { subscribeSome } from ':)/utils/subscribe-some'
 
 import { nextFrame } from './utils/next-frame'
+import { whenTransitionEnds } from './utils/when-transition-ends'
 
 export interface TransitionProps {
   name?: string
@@ -43,7 +44,7 @@ const createDestrucitonListener =
       bc.addClass(toClassName)
     })
 
-    bc.once('transitionend', () => {
+    whenTransitionEnds(bc, () => {
       deactivate()
 
       nextFrame(() => {
@@ -51,6 +52,7 @@ const createDestrucitonListener =
         destroy()
       })
     })
+
     return true
   }
 
@@ -61,12 +63,19 @@ const createCreationListener = (format: ClassNameFormatters) => (bc: BaseCompone
   nextFrame(() => {
     removeFrom()
   })
+
+  whenTransitionEnds(bc, () => {
+    removeActive()
+  })
 }
 
 type Transitiable = BaseComponent | Signal<BaseComponent | null>
 
 const transitionLogic = (props: TransitionProps, bc: BaseComponent) => {
-  listenDestroyUncurried(bc, createDestrucitonListener(formatClassName(props.name)))
+  const formatters = formatClassName(props.name)
+
+  createCreationListener(formatters)
+  listenDestroyUncurried(bc, createDestrucitonListener(formatters))
 }
 
 export const Transition = <T extends Array<Transitiable>>(props: TransitionProps, ...bc: T) => {
