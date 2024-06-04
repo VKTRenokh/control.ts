@@ -57,15 +57,21 @@ const createDestrucitonListener =
   }
 
 const createCreationListener = (format: ClassNameFormatters) => (bc: BaseComponent) => {
-  const removeActive = bc.addClass(format.enter('active'))
+  const deactivate = bc.addClass(format.enter('active'))
   const removeFrom = bc.addClass(format.enter('from'))
+  const toClassName = format.enter('to')
 
   nextFrame(() => {
     removeFrom()
+    bc.addClass(toClassName)
   })
 
   whenTransitionEnds(bc, () => {
-    removeActive()
+    deactivate()
+
+    nextFrame(() => {
+      bc.removeClass(toClassName)
+    })
   })
 }
 
@@ -74,7 +80,7 @@ type Transitiable = BaseComponent | Signal<BaseComponent | null>
 const transitionLogic = (props: TransitionProps, bc: BaseComponent) => {
   const formatters = formatClassName(props.name)
 
-  createCreationListener(formatters)
+  createCreationListener(formatters)(bc)
   listenDestroyUncurried(bc, createDestrucitonListener(formatters))
 }
 

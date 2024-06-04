@@ -1,11 +1,14 @@
-.ct-leave-active {
+.ct-leave-active,
+.ct-enter-active {
   transition: .5s ease;
 }
 
-.ct-leave-from {
+.ct-leave-from,
+.ct-enter-to {
   opacity: 1,
 }
 
-.ct-leave-to {
+.ct-leave-to,
+.ct-enter-from {
   opacity: 0;
 }

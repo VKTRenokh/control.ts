@@ -17,7 +17,7 @@ const meta: Meta<AnimationStoryProps> = {
 
     setTimeout(() => {
       transitioned[0]?.destroy();
-    }, 500);
+    }, 10_000);
 
     new MutationObserver((mutations) => {
       mutations.forEach((_mutation) => {
