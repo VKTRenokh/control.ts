@@ -2,7 +2,7 @@ import './animation.css';
 
 import type { TransitionProps } from '@control.ts/animations';
 import { Transition } from '@control.ts/animations';
-import { BaseComponent } from '@control.ts/min';
+import { $ as reactive, $$ as computed, BaseComponent, button, isSignal } from '@control.ts/signals';
 import type { Meta, StoryObj } from '@storybook/html';
 
 type AnimationStoryProps = TransitionProps & { component: BaseComponent };
@@ -13,25 +13,27 @@ const meta: Meta<AnimationStoryProps> = {
   title: 'example/Animation',
   tags: ['autodocs'],
   render: (args) => {
-    const transitioned = Transition({}, args.component);
-
-    setTimeout(() => {
-      transitioned[0]?.destroy();
-    }, 10_000);
-
-    new MutationObserver((mutations) => {
-      mutations.forEach((_mutation) => {
-        console.log(transitioned[0]?.node.className);
-      });
-    }).observe(args.component.node, { attributes: true });
-
-    return transitioned[0]!.node;
+    return args.component.node;
   },
 };
 
+const createToggle = () => {
+  const shouldShow = reactive(true);
+  const div = computed(() => (shouldShow.value ? new BaseComponent({ tag: 'div', txt: 'hello' }) : null));
+
+  console.log(isSignal(div), 'from storybook', div);
+
+  return new BaseComponent(
+    { tag: 'div' },
+    Transition({}, div) as unknown as BaseComponent,
+    button({
+      onclick: () => (shouldShow.value = !shouldShow.value),
+    }),
+  );
+};
 export const Toggle: Story = {
   args: {
-    component: new BaseComponent({ tag: 'div', txt: 'hello' }),
+    component: createToggle(),
   },
 };
 

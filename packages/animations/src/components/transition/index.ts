@@ -84,14 +84,16 @@ const transitionLogic = (props: TransitionProps, bc: BaseComponent) => {
   listenDestroyUncurried(bc, createDestrucitonListener(formatters))
 }
 
-export const Transition = <T extends Array<Transitiable>>(props: TransitionProps, ...bc: T) => {
-  return bc.map((bc) => {
-    if (isSignal(bc)) {
-      subscribeSome(bc, (bc) => transitionLogic(props, bc))
+export const Transition = <T extends Array<Transitiable>>(props: TransitionProps, ...components: T) => {
+  return components.map((component) => {
+    console.log(isSignal(component), component)
+    if (isSignal(component)) {
+      subscribeSome(component, (bc) => transitionLogic(props, bc))
 
-      return bc
+      return component
     }
-    transitionLogic(props, bc)
-    return bc
+    transitionLogic(props, component)
+
+    return component
   })
 }

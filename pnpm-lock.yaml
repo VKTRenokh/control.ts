@@ -53,6 +53,9 @@ importers:
       '@control.ts/min':
         specifier: workspace:*
         version: link:../../packages/min
+      '@control.ts/signals':
+        specifier: workspace:*
+        version: link:../../packages/signals
     devDependencies:
       '@chromatic-com/storybook':
         specifier: ^1.3.4

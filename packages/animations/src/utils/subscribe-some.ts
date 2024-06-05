@@ -9,4 +9,9 @@ import type { Signal } from '@control.ts/signals'
  * @internal
  */
 export const subscribeSome = <T>(signal: Signal<T>, subscriber: (value: NonNullable<T>) => void) =>
-  signal.subscribe((value) => isNotNullable(value) && subscriber(value))
+  signal.subscribe((value) => {
+    if (!isNotNullable(value)) {
+      return
+    }
+    subscriber(value)
+  })
