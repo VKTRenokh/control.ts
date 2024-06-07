@@ -79,30 +79,19 @@ const transitionLogic = (props: TransitionProps, bc: BaseComponent) => {
   listenDestroyUncurried(bc, createDestrucitonListener(formatters))
 }
 
-export const Transition = (
-  props: TransitionProps,
-  components: Signal<BaseComponent | null | undefined> | BaseComponent,
-) => {
-  if (isExternalSignal(components)) {
-    subscribeSome(components, (bc) => transitionLogic(props, bc))
-    return components
-  }
-  transitionLogic(props, components)
+export type Transitiable<T extends HTMLElement = HTMLElement> =
+  | Signal<BaseComponent<T> | null | undefined>
+  | BaseComponent<T>
 
-  return components
-  //return components.map((component) => {
-  //  console.log(component)
-  //  console.log(Signal.prototype)
-  //  //@ts-expect-error 123
-  //  console.log(Reflect.getPrototypeOf(Reflect.getPrototypeOf(component)) === Signal.prototype)
-  //
-  //  if (component instanceof Signal) {
-  //    subscribeSome(component, (bc) => transitionLogic(props, bc))
-  //
-  //    return component
-  //  }
-  //  transitionLogic(props, component)
-  //
-  //  return component
-  //})
+export const Transition = (props: TransitionProps, ...components: Transitiable[]) => {
+  return components.map((component) => {
+    if (isExternalSignal(component)) {
+      subscribeSome(component, (bc) => transitionLogic(props, bc))
+
+      return component
+    }
+    transitionLogic(props, component)
+
+    return component
+  })
 }

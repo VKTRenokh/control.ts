@@ -6,17 +6,12 @@ export function isSignal<T>(value: T | Signal<T>): value is Signal<T> {
   return value instanceof Signal;
 }
 
-function hasAllClassMethods<I, T extends { new (...a: readonly unknown[]): I }>(object: object, clazz: T): boolean {
-  const classMethods = Object.getOwnPropertyNames(clazz.prototype).filter(
-    (prop) => typeof clazz.prototype[prop] === 'function' && prop !== 'constructor',
-  );
-
-  // eslint-disable-next-line
-  return classMethods.every((method) => method in object && typeof (object as any)[method] === 'function');
+function hasSameNameAsSignal(value: object) {
+  return value.constructor.name === Signal.name;
 }
 
 export function isExternalSignal<T>(value: T | Signal<T>): value is Signal<T> {
-  return typeof value === 'object' && isNotNullable(value) && hasAllClassMethods(value, Signal);
+  return typeof value === 'object' && isNotNullable(value) && hasSameNameAsSignal(value);
 }
 
 export function getValue$<T>(value: T | Signal<T>): T {
