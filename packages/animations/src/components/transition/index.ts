@@ -1,7 +1,4 @@
-import type { BaseComponent as BaseComponentMin } from '@control.ts/min'
-import { type BaseComponent as BaseComponent$, isSignal, type Signal } from '@control.ts/signals'
-
-type BaseComponent = BaseComponent$ | BaseComponentMin
+import { type BaseComponent, isExternalSignal, type Signal } from '@control.ts/signals'
 
 import { type DestroyListener, listenDestroyUncurried } from ':)/utils/listen-destroy'
 import { subscribeSome } from ':)/utils/subscribe-some'
@@ -75,8 +72,6 @@ const createCreationListener = (format: ClassNameFormatters) => (bc: BaseCompone
   })
 }
 
-type Transitiable = BaseComponent | Signal<BaseComponent | null>
-
 const transitionLogic = (props: TransitionProps, bc: BaseComponent) => {
   const formatters = formatClassName(props.name)
 
@@ -84,16 +79,30 @@ const transitionLogic = (props: TransitionProps, bc: BaseComponent) => {
   listenDestroyUncurried(bc, createDestrucitonListener(formatters))
 }
 
-export const Transition = <T extends Array<Transitiable>>(props: TransitionProps, ...components: T) => {
-  return components.map((component) => {
-    console.log(isSignal(component), component)
-    if (isSignal(component)) {
-      subscribeSome(component, (bc) => transitionLogic(props, bc))
+export const Transition = (
+  props: TransitionProps,
+  components: Signal<BaseComponent | null | undefined> | BaseComponent,
+) => {
+  if (isExternalSignal(components)) {
+    subscribeSome(components, (bc) => transitionLogic(props, bc))
+    return components
+  }
+  transitionLogic(props, components)
 
-      return component
-    }
-    transitionLogic(props, component)
-
-    return component
-  })
+  return components
+  //return components.map((component) => {
+  //  console.log(component)
+  //  console.log(Signal.prototype)
+  //  //@ts-expect-error 123
+  //  console.log(Reflect.getPrototypeOf(Reflect.getPrototypeOf(component)) === Signal.prototype)
+  //
+  //  if (component instanceof Signal) {
+  //    subscribeSome(component, (bc) => transitionLogic(props, bc))
+  //
+  //    return component
+  //  }
+  //  transitionLogic(props, component)
+  //
+  //  return component
+  //})
 }
