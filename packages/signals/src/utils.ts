@@ -6,12 +6,12 @@ export function isSignal<T>(value: T | Signal<T>): value is Signal<T> {
   return value instanceof Signal;
 }
 
-function hasSameNameAsSignal(value: object) {
-  return value.constructor.name === Signal.name;
+function hasBrand(value: object) {
+  return 'brand' in value && typeof value.brand === 'symbol';
 }
 
 export function isExternalSignal<T>(value: T | Signal<T>): value is Signal<T> {
-  return typeof value === 'object' && isNotNullable(value) && hasSameNameAsSignal(value);
+  return typeof value === 'object' && isNotNullable(value) && hasBrand(value);
 }
 
 export function getValue$<T>(value: T | Signal<T>): T {
