@@ -77,11 +77,10 @@ const transitionLogic = (props: TransitionProps, bc: BaseComponent) => {
 
   createCreationListener(formatters)(bc)
   listenDestroyUncurried(bc, createDestrucitonListener(formatters))
+  console.log(bc)
 }
 
-export type Transitiable<T extends HTMLElement = HTMLElement> =
-  | Signal<BaseComponent<T> | null | undefined>
-  | BaseComponent<T>
+export type Transitiable<T extends HTMLElement = HTMLElement> = Signal<BaseComponent<T> | null> | BaseComponent<T>
 
 export const Transition = (props: TransitionProps, ...components: Transitiable[]) => {
   return components.map((component) => {
