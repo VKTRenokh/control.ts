@@ -1,10 +1,4 @@
-import type { BaseComponent as BaseComponentMin } from '@control.ts/min'
-import type { BaseComponent as BaseComponent$ } from '@control.ts/signals'
-
-type BaseComponent = BaseComponentMin | BaseComponent$
-
-/** @internal */
-export const noop = () => {}
+import type { BaseComponent } from '@control.ts/signals'
 
 /** @internal */
 export type DestroyListener<T = BaseComponent> = (bc: T, destroy: () => void) => void | boolean
@@ -27,12 +21,5 @@ const replaceDestroy = <T extends BaseComponent>(bc: T, listener: DestroyListene
 }
 
 /** @internal */
-export const listenDestroy =
-  <T extends BaseComponent = BaseComponent>(listener: DestroyListener<T>) =>
-  (bc: T) =>
-    replaceDestroy(bc, listener)
-
-/** @internal */
-export const listenDestroyUncurried = <T extends BaseComponent>(bc: T, listener: DestroyListener<T>) => {
+export const listenDestroy = <T extends BaseComponent>(bc: T, listener: DestroyListener<T>) =>
   replaceDestroy(bc, listener)
-}

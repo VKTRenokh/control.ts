@@ -1,6 +1,6 @@
 import { type BaseComponent, isExternalSignal, type Signal } from '@control.ts/signals'
 
-import { type DestroyListener, listenDestroyUncurried } from ':)/utils/listen-destroy'
+import { type DestroyListener, listenDestroy } from ':)/utils/listen-destroy'
 import { subscribeSome } from ':)/utils/subscribe-some'
 
 import { nextFrame } from './utils/next-frame'
@@ -53,7 +53,7 @@ const createDestrucitonListener =
     return true
   }
 
-const createCreationListener = (format: ClassNameFormatters) => (bc: BaseComponent) => {
+const onCreate = (format: ClassNameFormatters, bc: BaseComponent) => {
   const deactivate = bc.addClass(format.enter('active'))
   const removeFrom = bc.addClass(format.enter('from'))
   const toClassName = format.enter('to')
@@ -75,11 +75,14 @@ const createCreationListener = (format: ClassNameFormatters) => (bc: BaseCompone
 const transitionLogic = (props: TransitionProps, bc: BaseComponent) => {
   const formatters = formatClassName(props.name)
 
-  createCreationListener(formatters)(bc)
-  listenDestroyUncurried(bc, createDestrucitonListener(formatters))
-  console.log(bc)
+  onCreate(formatters, bc)
+  listenDestroy(bc, createDestrucitonListener(formatters))
 }
 
+/**
+ * Elementes that can be transitioned using `Transition`
+ * @see {@link Transition}
+ */
 export type Transitiable<T extends HTMLElement = HTMLElement> = Signal<BaseComponent<T> | null> | BaseComponent<T>
 
 export const Transition = (props: TransitionProps, ...components: Transitiable[]) => {

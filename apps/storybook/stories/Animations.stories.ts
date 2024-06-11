@@ -20,11 +20,14 @@ const createToggle = () => {
   const shouldShow = reactive(true);
   const div = computed(() => (shouldShow.value ? new BaseComponent({ tag: 'div', txt: 'hello' }) : null));
 
-  effect(() => console.log(shouldShow.value));
+  effect(() => {
+    console.log(shouldShow.value);
+    console.log(div.value);
+  });
 
   return new BaseComponent(
     { tag: 'div' },
-    Transition({}, div),
+    ...Transition({}, div),
     button({
       onclick: () => (shouldShow.value = !shouldShow.value),
       txt: 'toggle',
