@@ -81,9 +81,10 @@ export class BaseComponent<T extends HTMLElement = HTMLElement> extends Control<
             }
             prevValue = value;
           } else if (prevValue !== null) {
-            prevValue.replaceWith(empty);
+            //prevValue.replaceWith(empty);
             if (prevValue instanceof BaseComponent) {
-              this.removeFromChildren(prevValue);
+              prevValue.destroy();
+              //this.removeFromChildren(prevValue);
             }
             prevValue = null;
           }
