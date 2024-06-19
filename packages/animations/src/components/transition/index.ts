@@ -46,6 +46,7 @@ const formatClassName = (name?: string) => {
   }
 }
 
+// TODO: remove repeating code (onCreate)
 const createDestrucitonListener =
   (format: ClassNameFormatters): DestroyListener =>
   (bc, destroy) => {
@@ -141,6 +142,7 @@ export type Transitiable<T extends HTMLElement = HTMLElement> = Signal<BaseCompo
  *   opacity: 0
  * }
  */
+//  TODO: make use of `onDestroy` & `onChange` props
 export const Transition = (props: TransitionProps, ...components: Transitiable[]) => {
   return components.map((component) => {
     if (isExternalSignal(component)) {

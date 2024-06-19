@@ -55,6 +55,7 @@ export class BaseComponent<T extends HTMLElement = HTMLElement> extends Control<
     }
   }
 
+  // TODO: Make this more readable
   public append(child: NonNullable<BaseComponentChild>): void {
     if (child instanceof BaseComponent) {
       this._node.append(child.node);
