@@ -1,3 +1,6 @@
+import { EventEmitter } from './utils/event-emitter';
+import { noop } from './utils/noop';
+
 export type Unsubscribe = () => void;
 
 export type PossibleChild<C extends HTMLElement, Component> = C | Component | null;
@@ -17,7 +20,19 @@ export type Props<T extends HTMLElement = HTMLElement> = Partial<
   style?: Partial<CSSStyleDeclaration>;
 };
 
+export interface ControlEvent<T extends HTMLElement = HTMLElement> {
+  preventDefault: () => void;
+  control: Control<T>;
+}
+
+export type ControlEvents = {
+  beforeDestory: [event: ControlEvent];
+  afterDestroy: [event: ControlEvent];
+};
+
 export abstract class Control<T extends HTMLElement = HTMLElement> {
+  public events = new EventEmitter<ControlEvents>();
+
   protected abstract _node: T;
 
   protected abstract children: Control[];
@@ -54,9 +69,18 @@ export abstract class Control<T extends HTMLElement = HTMLElement> {
   }
 
   public destroy(): void {
+    this.events.emit('beforeDestory', {
+      preventDefault: () => {
+        throw new Error('prevent default');
+      },
+      control: this,
+    });
+
     this.destroyChildren();
     this._node.remove();
     this.unsubscribeAll();
+
+    this.events.emit('afterDestroy', { preventDefault: noop, control: this });
   }
 
   public toString(): string {

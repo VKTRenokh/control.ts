@@ -1,10 +1,10 @@
 import { type BaseComponent, isExternalSignal, type Signal } from '@control.ts/signals'
 
-import { type DestroyListener, listenDestroy } from ':)/utils/listen-destroy'
 import { subscribeSome } from ':)/utils/subscribe-some'
 
 import { nextFrame } from './utils/next-frame'
 import { whenTransitionEnds } from './utils/when-transition-ends'
+import { beforeDestroy } from './utils/before-destroy'
 
 /**
  * Props for `Transition` component wrapper
@@ -47,32 +47,30 @@ const formatClassName = (name?: string) => {
 }
 
 // TODO: remove repeating code (onCreate)
-const createDestrucitonListener =
-  (format: ClassNameFormatters): DestroyListener =>
-  (bc, destroy) => {
-    console.log('createDestructionListener')
+const createDestrucitonListener = (format: ClassNameFormatters) => () => {
+  console.log('createDestructionListener')
 
-    const deactivate = bc.addClass(format.leave('active'))
-    const toClassName = format.leave('to')
+  const deactivate = bc.addClass(format.leave('active'))
+  const toClassName = format.leave('to')
 
-    const removeFrom = bc.addClass(format.leave('from'))
+  const removeFrom = bc.addClass(format.leave('from'))
+
+  nextFrame(() => {
+    removeFrom()
+    bc.addClass(toClassName)
+  })
+
+  whenTransitionEnds(bc, () => {
+    deactivate()
 
     nextFrame(() => {
-      removeFrom()
-      bc.addClass(toClassName)
+      bc.removeClass(toClassName)
+      destroy()
     })
+  })
 
-    whenTransitionEnds(bc, () => {
-      deactivate()
-
-      nextFrame(() => {
-        bc.removeClass(toClassName)
-        destroy()
-      })
-    })
-
-    return true
-  }
+  return true
+}
 
 const onCreate = (format: ClassNameFormatters, bc: BaseComponent) => {
   const deactivate = bc.addClass(format.enter('active'))
@@ -97,8 +95,7 @@ const transitionLogic = (props: TransitionProps, bc: BaseComponent) => {
   const formatters = formatClassName(props.name)
 
   onCreate(formatters, bc)
-
-  listenDestroy(bc, createDestrucitonListener(formatters))
+  beforeDestroy(bc, createDestrucitonListener(formatters))
 }
 
 /**
