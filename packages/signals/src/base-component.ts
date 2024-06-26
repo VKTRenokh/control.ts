@@ -1,5 +1,12 @@
-import type { Props } from '@control.ts/control';
-import { Control, isNotNullable, type PossibleChild } from '@control.ts/control';
+import {
+  Control,
+  type ControlEvent,
+  type ControlEvents,
+  EventEmitter,
+  isNotNullable,
+  type PossibleChild,
+  type Props,
+} from '@control.ts/control';
 import { Signal } from '@preact/signals-core';
 
 import { isSignal } from './utils';
@@ -17,8 +24,24 @@ export type BaseComponentChild<T extends HTMLElement = HTMLElement> =
   | PossibleChild<T, BaseComponent<T>>
   | Signal<BaseComponent<T> | null>;
 
+type ReplaceProperties<Base, Replacer> = Omit<Base, keyof Replacer> & Replacer;
+
+type BaseComponentEvent<T extends HTMLElement = HTMLElement> = ReplaceProperties<
+  ControlEvent,
+  { component: BaseComponent<T> }
+>;
+
+type BaseComponentEvents<T extends HTMLElement = HTMLElement> = {
+  [K in keyof ControlEvents]: ControlEvents[K] extends [event: infer U]
+    ? U extends ControlEvent
+      ? [event: BaseComponentEvent<T>]
+      : U
+    : never;
+};
+
 export class BaseComponent<T extends HTMLElement = HTMLElement> extends Control<T> {
   protected _node: T;
+  public override events = new EventEmitter<BaseComponentEvents<T>>();
 
   public override children: BaseComponent[] = [];
 
