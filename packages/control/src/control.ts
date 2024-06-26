@@ -20,14 +20,14 @@ export type Props<T extends HTMLElement = HTMLElement> = Partial<
   style?: Partial<CSSStyleDeclaration>;
 };
 
-export interface ControlEvent<T extends HTMLElement = HTMLElement> {
+export interface ControlEvent<Component extends Control<T>, T extends HTMLElement = HTMLElement> {
   preventDefault: () => void;
-  control: Control<T>;
+  component: Component;
 }
 
 export type ControlEvents = {
-  beforeDestory: [event: ControlEvent];
-  afterDestroy: [event: ControlEvent];
+  beforeDestory: [event: ControlEvent<Control>];
+  afterDestroy: [event: ControlEvent<Control>];
 };
 
 export abstract class Control<T extends HTMLElement = HTMLElement> {

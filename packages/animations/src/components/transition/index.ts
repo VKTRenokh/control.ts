@@ -2,9 +2,9 @@ import { type BaseComponent, isExternalSignal, type Signal } from '@control.ts/s
 
 import { subscribeSome } from ':)/utils/subscribe-some'
 
+import { beforeDestroy } from './utils/before-destroy'
 import { nextFrame } from './utils/next-frame'
 import { whenTransitionEnds } from './utils/when-transition-ends'
-import { beforeDestroy } from './utils/before-destroy'
 
 /**
  * Props for `Transition` component wrapper
